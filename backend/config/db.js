@@ -76,7 +76,7 @@ async function connectDatabase() {
     console.warn('\n========================================================================');
     console.warn('WARNING: Failed to connect to MySQL database.');
     console.warn('Error detail:', error.message);
-    if (process.env.USE_MOCK_FALLBACK === 'true') {
+    if (process.env.USE_MOCK_FALLBACK !== 'false') {
       console.warn('FALLBACK ACTIVATED: Running with fully operational In-Memory Mock Database!');
       console.warn('You can browse, create bookings, return vehicles, and test the app seamlessly.');
       console.warn('========================================================================\n');

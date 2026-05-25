@@ -102,14 +102,24 @@ async function request(url, options = {}) {
 
   try {
     const res = await fetch(url, mergeOptions);
-    const json = await res.json();
+    let json;
+    try {
+      json = await res.json();
+    } catch (parseErr) {
+      console.warn('Response is not valid JSON. Backend might be down or misconfigured. Falling back to client-side mock.');
+      useClientMock = true;
+      throw new Error('CLIENT_MOCK_ACTIVE');
+    }
     if (!res.ok) {
       throw new Error(json.message || `HTTP ${res.status} error`);
     }
     return json;
   } catch (error) {
-    if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
-      console.warn('Backend server unreachable. Switching current window session to Client Mock Fallback.');
+    if (error.message === 'CLIENT_MOCK_ACTIVE') {
+      throw error;
+    }
+    if (error.message === 'Failed to fetch' || error.name === 'TypeError' || error.name === 'SyntaxError') {
+      console.warn('Backend server unreachable or returned invalid response. Switching current window session to Client Mock Fallback.');
       useClientMock = true;
       throw new Error('CLIENT_MOCK_ACTIVE');
     }
