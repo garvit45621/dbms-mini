@@ -1,0 +1,13 @@
+{
+  "name": "vehicle-rental-system-root",
+  "version": "1.0.0",
+  "description": "Root management scripts for the Vehicle Rental Management System",
+  "scripts": {
+    "install-all": "npm --prefix backend install",
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

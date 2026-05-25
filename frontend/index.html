@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveEase | Vehicle Rental Management System</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Feather Icons for high-quality clean commercial iconography -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="view-login" class="login-container page-view active">
+    <div class="login-form-side">
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="sidebar-logo-icon"><i data-feather="key"></i></div>
+          <span class="sidebar-logo-text" style="font-size: 20px;">DriveEase</span>
+        </div>
+        <h2>Welcome back</h2>
+        <p class="subtitle">Log in to manage your vehicle rental system operations.</p>
+        
+        <form id="login-form" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-username">Username</label>
+            <input type="text" id="login-username" class="form-control" placeholder="Enter username (e.g., admin)" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div class="login-remember">
+            <label>
+              <input type="checkbox" id="login-remember-me" checked> Remember this device
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+        
+        <div style="margin-top: 24px; padding: 12px; background-color: var(--bg-secondary); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-secondary); border: 1px solid var(--border-color);">
+          <strong>Demo Credentials:</strong><br>
+          Username: <code style="font-family: monospace;">admin</code><br>
+          Password: <code style="font-family: monospace;">admin123</code>
+        </div>
+      </div>
+    </div>
+    
+    <div class="login-illustration-side">
+      <div class="illustration-graphics">
+        <!-- Render a real vector style premium vehicle image -->
+        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80" alt="Premium rental car mockup">
+      </div>
+      <div class="illustration-text">
+        <h3>DriveEase Rental Fleet Operations</h3>
+        <p>A high-performance SaaS engine for reservations, fleet utilization, real-time analytics, automated return billing, and financial auditing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN SYSTEM DASHBOARD -->
+  <div id="main-app" class="app-container" style="display: none;">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo" onclick="switchView('dashboard')" style="cursor: pointer;">
+        <div class="sidebar-logo-icon"><i data-feather="truck"></i></div>
+        <span class="sidebar-logo-text">DriveEase Admin</span>
+      </div>
+      
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item active" data-view="dashboard">
+          <a onclick="switchView('dashboard')"><i data-feather="grid"></i> Dashboard</a>
+        </li>
+        <li class="sidebar-nav-item" data-view="vehicles">
+          <a onclick="switchView('vehicles')"><i data-feather="sliders"></i> Vehicles</a>
+        </li>
+        <li class="sidebar-nav-item" data-view="customers">
+          <a onclick="switchView('customers')"><i data-feather="users"></i> Customers</a>
+        </li>
+        <li class="sidebar-nav-item" data-view="bookings">
+          <a onclick="switchView('bookings')"><i data-feather="calendar"></i> Book Vehicle</a>
+        </li>
+        <li class="sidebar-nav-item" data-view="returns">
+          <a onclick="switchView('returns')"><i data-feather="corner-down-left"></i> Return Vehicle</a>
+        </li>
+        <li class="sidebar-nav-item" data-view="reports">
+          <a onclick="switchView('reports')"><i data-feather="bar-chart-2"></i> Analytics & Reports</a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <div class="sidebar-user-pill">
+          <div id="user-avatar" class="sidebar-user-avatar">A</div>
+          <div class="sidebar-user-info">
+            <div id="user-display-name" class="sidebar-user-name">Loading...</div>
+            <div id="user-display-role" class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="handleLogout()" style="width: 100%; border: 1px solid var(--border-color); display: flex; justify-content: center; gap: 8px;">
+          <i data-feather="log-out" style="width: 14px; height: 14px;"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Section -->
+    <div class="main-wrapper">
+      
+      <!-- Top Navbar -->
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="menu-toggle" onclick="toggleSidebar()"><i data-feather="menu"></i></button>
+          <div class="page-title-section">
+            <h1 id="header-page-title" class="page-title">Dashboard</h1>
+            <p id="header-page-subtitle" class="page-subtitle">Real-time status overview</p>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button class="btn btn-primary btn-sm" onclick="switchView('bookings')">
+            <i data-feather="plus"></i> New Rental Booking
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <main class="content-area">
+        
+        <!-- Viewport A: Dashboard -->
+        <div id="view-dashboard" class="page-view">
+          <!-- Metrics Widgets -->
+          <div class="metrics-grid">
+            <div class="metric-card primary-metric">
+              <div class="metric-header">
+                <span>Total Fleet Size</span>
+                <div class="metric-icon-box"><i data-feather="truck"></i></div>
+              </div>
+              <div id="stat-total-vehicles" class="metric-value">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Available Vehicles</span>
+                <div class="metric-icon-box" style="color: var(--success);"><i data-feather="check-circle"></i></div>
+              </div>
+              <div id="stat-available-vehicles" class="metric-value">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Active Bookings</span>
+                <div class="metric-icon-box" style="color: var(--primary);"><i data-feather="play-circle"></i></div>
+              </div>
+              <div id="stat-active-rentals" class="metric-value">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Total Revenue (INR)</span>
+                <div class="metric-icon-box" style="color: var(--info);"><i data-feather="credit-card"></i></div>
+              </div>
+              <div id="stat-revenue" class="metric-value">₹0</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <!-- Recent Bookings Table -->
+            <div class="card" style="margin-bottom: 0;">
+              <div class="card-title">
+                <span>Recent Bookings</span>
+                <button class="btn btn-secondary btn-sm" onclick="switchView('reports')">View All</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Customer</th>
+                      <th>Vehicle</th>
+                      <th>Base Cost</th>
+                      <th>Status</th>
+                      <th>Invoice</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-bookings">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Side Summary -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+              <div class="card" style="margin-bottom: 0;">
+                <div class="card-title">Quick Actions</div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <button class="btn btn-secondary" onclick="switchView('vehicles'); openAddVehicleModal();" style="justify-content: flex-start;">
+                    <i data-feather="plus"></i> Add New Vehicle
+                  </button>
+                  <button class="btn btn-secondary" onclick="switchView('customers'); openAddCustomerModal();" style="justify-content: flex-start;">
+                    <i data-feather="user-plus"></i> Add New Customer
+                  </button>
+                  <button class="btn btn-secondary" onclick="switchView('returns')" style="justify-content: flex-start;">
+                    <i data-feather="corner-down-left"></i> Check-In returned Car
+                  </button>
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom: 0;">
+                <div class="card-title">Fleet Availability</div>
+                <div id="dashboard-fleet-summary" style="display: flex; flex-direction: column; gap: 14px;">
+                  <!-- Loaded dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewport B: Vehicle Management -->
+        <div id="view-vehicles" class="page-view">
+          <div class="filters-bar">
+            <div class="search-input-wrapper">
+              <input type="text" id="vehicle-search" class="form-control" placeholder="Search by make, model, or plate..." oninput="loadVehiclesList(1)">
+            </div>
+            <select id="vehicle-filter-category" class="form-control filter-select" onchange="loadVehiclesList(1)">
+              <option value="">All Categories</option>
+              <!-- Categories load dynamic -->
+            </select>
+            <select id="vehicle-filter-status" class="form-control filter-select" onchange="loadVehiclesList(1)">
+              <option value="">All Statuses</option>
+              <option value="available">Available</option>
+              <option value="rented">Rented</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="retired">Retired</option>
+            </select>
+            <button class="btn btn-primary" onclick="openAddVehicleModal()">
+              <i data-feather="plus"></i> Add Vehicle
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Car Preview</th>
+                    <th>Make & Model</th>
+                    <th>Plate ID</th>
+                    <th>Category</th>
+                    <th>Spec details</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicle-table-body">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination-container">
+              <div id="vehicle-pagination-info">Showing 0 of 0 vehicles</div>
+              <div id="vehicle-pagination-buttons" style="display: flex; gap: 8px;">
+                <!-- Dynamic pagination buttons -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewport C: Customer Management -->
+        <div id="view-customers" class="page-view">
+          <!-- Main Customer view splitting Customer List / Customer Profile details -->
+          <div id="customer-list-panel">
+            <div class="filters-bar">
+              <div class="search-input-wrapper">
+                <input type="text" id="customer-search" class="form-control" placeholder="Search customer by name, email, or DL..." oninput="loadCustomersList(1)">
+              </div>
+              <button class="btn btn-primary" onclick="openAddCustomerModal()">
+                <i data-feather="user-plus"></i> Register Customer
+              </button>
+            </div>
+
+            <div class="card">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email ID</th>
+                      <th>Phone Number</th>
+                      <th>Driving License</th>
+                      <th>Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="customer-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination-container">
+                <div id="customer-pagination-info">Showing 0 of 0 customers</div>
+                <div id="customer-pagination-buttons" style="display: flex; gap: 8px;">
+                  <!-- Dynamic -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Profile Sub-view (Hidden by default, shown on select) -->
+          <div id="customer-profile-panel" style="display: none;">
+            <div style="margin-bottom: 24px;">
+              <button class="btn btn-secondary btn-sm" onclick="closeCustomerProfile()"><i data-feather="arrow-left"></i> Back to directory</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+              <!-- Profile details Card -->
+              <div class="card">
+                <div style="text-align: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color);">
+                  <div class="sidebar-user-avatar" style="width: 64px; height: 64px; font-size: 24px; margin: 0 auto 16px auto;" id="profile-avatar-letters">C</div>
+                  <h3 id="profile-full-name">Customer Name</h3>
+                  <span id="profile-badge-status" class="badge">Active</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
+                  <div>
+                    <span class="form-label" style="margin-bottom: 2px;">Email Address</span>
+                    <div id="profile-email" style="font-weight: 500;">email@domain.com</div>
+                  </div>
+                  <div>
+                    <span class="form-label" style="margin-bottom: 2px;">Phone Number</span>
+                    <div id="profile-phone" style="font-weight: 500;">+91 99999 99999</div>
+                  </div>
+                  <div>
+                    <span class="form-label" style="margin-bottom: 2px;">Driving License</span>
+                    <div id="profile-dl" style="font-weight: 500; font-family: monospace;">DL-XXXXXXXXX</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rental History list -->
+              <div class="card">
+                <div class="card-title">Rental Booking History</div>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Booking ID</th>
+                        <th>Vehicle info</th>
+                        <th>Start Date</th>
+                        <th>Return Date</th>
+                        <th>Net Total</th>
+                        <th>Booking Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="profile-rental-history">
+                      <!-- Dynamic list -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewport D: Rental Booking Workflow -->
+        <div id="view-bookings" class="page-view">
+          <div class="invoice-box" style="max-width: 800px;">
+            <div class="wizard-steps">
+              <div id="step-tab-1" class="wizard-step active">1. Customer & Vehicle</div>
+              <div id="step-tab-2" class="wizard-step">2. Dates & Rates</div>
+              <div id="step-tab-3" class="wizard-step">3. Invoice Generation</div>
+            </div>
+
+            <form id="booking-wizard-form" onsubmit="event.preventDefault()">
+              
+              <!-- Wizard Step 1 -->
+              <div id="wizard-step-1" class="wizard-panel active">
+                <h3 style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Choose Rental Candidates</h3>
+                
+                <div class="form-group">
+                  <label class="form-label" for="book-customer-select">Select Customer</label>
+                  <select id="book-customer-select" class="form-control" required>
+                    <option value="">-- Choose active customer --</option>
+                    <!-- Filled dynamically -->
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="book-vehicle-select">Select Available Vehicle</label>
+                  <select id="book-vehicle-select" class="form-control" onchange="updateBookingVehicleDetails()" required>
+                    <option value="">-- Choose available vehicle --</option>
+                    <!-- Filled dynamically -->
+                  </select>
+                </div>
+
+                <div id="booking-vehicle-preview-card" style="display: none; padding: 16px; background-color: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); margin-top: 16px;">
+                  <h4 id="booking-veh-name" style="font-size: 14px; font-weight: 600;">Honda Civic</h4>
+                  <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    <div>Daily Rental Rate: <strong id="booking-veh-rate">₹0</strong></div>
+                    <div>Security Deposit: <strong id="booking-veh-deposit">₹0</strong></div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" class="btn btn-primary" onclick="goToWizardStep(2)">Proceed to Billing Dates</button>
+                </div>
+              </div>
+
+              <!-- Wizard Step 2 -->
+              <div id="wizard-step-2" class="wizard-panel">
+                <h3 style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Rental Period & Pricing Adjustments</h3>
+
+                <div class="form-group row">
+                  <div>
+                    <label class="form-label" for="book-start-date">Pickup Date</label>
+                    <input type="datetime-local" id="book-start-date" class="form-control" onchange="calculateBookingInvoiceEstimates()" required>
+                  </div>
+                  <div>
+                    <label class="form-label" for="book-end-date">Drop-off Date</label>
+                    <input type="datetime-local" id="book-end-date" class="form-control" onchange="calculateBookingInvoiceEstimates()" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="book-discount">Promotional Discount (INR)</label>
+                  <input type="number" id="book-discount" class="form-control" min="0" value="0" placeholder="0.00" oninput="calculateBookingInvoiceEstimates()">
+                </div>
+
+                <div id="booking-rates-summary" class="card" style="margin-top: 24px; padding: 16px; background-color: var(--bg-secondary); border-color: var(--border-color);">
+                  <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;">Billing Computation</h4>
+                  <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Rental Duration:</span>
+                      <span id="book-summary-days" style="font-weight: 600;">1 Day(s)</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Base Rental + Refundable Deposit:</span>
+                      <span id="book-summary-subtotal">₹0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>State Sales Tax (12%):</span>
+                      <span id="book-summary-tax">₹0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                      <span>Applied Discount:</span>
+                      <span id="book-summary-discount">-₹0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 4px;">
+                      <span>Estimate Total Due:</span>
+                      <span id="book-summary-total">₹0.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 24px;">
+                  <button type="button" class="btn btn-secondary" onclick="goToWizardStep(1)">Back</button>
+                  <button type="button" class="btn btn-primary" onclick="submitBookingOrder()">Book & Generate Invoice</button>
+                </div>
+              </div>
+
+              <!-- Wizard Step 3 -->
+              <div id="wizard-step-3" class="wizard-panel">
+                <div id="booking-completed-invoice" class="invoice-box" style="border: none; padding: 0;">
+                  <!-- Invoice gets generated and placed here -->
+                </div>
+                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px;">
+                  <button type="button" class="btn btn-secondary" onclick="printBookingInvoice()"><i data-feather="print" style="width: 14px; height: 14px; vertical-align: middle;"></i> Print Receipt</button>
+                  <button type="button" class="btn btn-secondary" onclick="resetBookingWizard()">Book Another Car</button>
+                  <button type="button" class="btn btn-primary" onclick="switchView('dashboard')">Go to Dashboard</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Viewport E: Return Vehicle -->
+        <div id="view-returns" class="page-view">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1000px; margin: 0 auto;">
+            
+            <!-- Return Input Form -->
+            <div class="card">
+              <div class="card-title">Process Returned Fleet Vehicle</div>
+              <form id="vehicle-return-form" onsubmit="submitReturnLog(event)">
+                
+                <div class="form-group">
+                  <label class="form-label" for="return-rental-select">Select Active Rental Booking</label>
+                  <select id="return-rental-select" class="form-control" onchange="handleReturnRentalSelection()" required>
+                    <option value="">-- Choose active customer rental --</option>
+                    <!-- Loaded dynamically -->
+                  </select>
+                </div>
+
+                <div id="return-details-form-section" style="display: none;">
+                  <div class="form-group row">
+                    <div>
+                      <label class="form-label" for="return-mileage">Odometer Reading (KM)</label>
+                      <input type="number" id="return-mileage" class="form-control" min="0" placeholder="e.g. 15000" onchange="calculateReturnSettlement()" required>
+                      <small style="font-size: 11px; color: var(--text-muted);">Current odometer starts at: <span id="return-start-mileage">0</span> KM</small>
+                    </div>
+                    <div>
+                      <label class="form-label" for="return-fuel">Fuel Level Check-in</label>
+                      <select id="return-fuel" class="form-control" required>
+                        <option value="full">Full (100%)</option>
+                        <option value="three_quarters">Three Quarters (75%)</option>
+                        <option value="half">Half (50%)</option>
+                        <option value="quarter">Quarter (25%)</option>
+                        <option value="empty">Empty (0%)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="return-damage-notes">Inspection / Damage Notes</label>
+                    <textarea id="return-damage-notes" class="form-control" rows="3" placeholder="Describe any scrapes, body damages, or interior spills..."></textarea>
+                  </div>
+
+                  <div class="form-group row">
+                    <div>
+                      <label class="form-label" for="return-damage-severity">Damage Assessment</label>
+                      <select id="return-damage-severity" class="form-control" onchange="updateReturnDamageSeverity()">
+                        <option value="none">None (₹0)</option>
+                        <option value="minor">Minor Scratches (₹2,500)</option>
+                        <option value="moderate">Moderate Body Dents (₹6,000)</option>
+                        <option value="major">Major Accident Damage (₹15,000)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="form-label" for="return-damage-charges">Damage Surcharges (INR)</label>
+                      <input type="number" id="return-damage-charges" class="form-control" min="0" value="0" placeholder="0.00" oninput="calculateReturnSettlement()">
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div>
+                      <label class="form-label" for="return-additional-charges">Misc Cleaning Fees (INR)</label>
+                      <input type="number" id="return-additional-charges" class="form-control" min="0" value="0" placeholder="0.00" oninput="calculateReturnSettlement()">
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;">Log Return & Settle Invoices</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Return Balance Sheet Summary -->
+            <div class="card" id="return-summary-card" style="display: none; height: fit-content;">
+              <div class="card-title">Settlement Computation</div>
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Odometer Log:</span>
+                  <span id="ret-calc-mileage">0 KM (+0 KM)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Late Hours (Estimated):</span>
+                  <span id="ret-calc-late-hours" style="font-weight: 500;">0 Hr(s)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                  <span>Late Fee Surcharges:</span>
+                  <span id="ret-calc-late-fee">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                  <span>Inspection Damage Surcharge:</span>
+                  <span id="ret-calc-damage">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--danger);">
+                  <span>Cleaning & Miscellaneous:</span>
+                  <span id="ret-calc-misc">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 12px; color: var(--success); font-weight: 500;">
+                  <span>Original Security Deposit:</span>
+                  <span id="ret-calc-deposit">₹0.00</span>
+                </div>
+                
+                <div id="ret-summary-settlement-row" style="display: flex; justify-content: space-between; border-top: 2px solid var(--text-primary); padding-top: 12px; font-weight: 700; font-size: 16px;">
+                  <span id="ret-calc-type-label">Total Refund Due:</span>
+                  <span id="ret-calc-total-final">₹0.00</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Viewport F: Reports Dashboard -->
+        <div id="view-reports" class="page-view">
+          <!-- Visual Charts Row -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px;">
+            <!-- Revenue Chart Card -->
+            <div class="card" style="margin-bottom: 0; min-height: 320px; display: flex; flex-direction: column;">
+              <div class="card-title">Category Revenue Share</div>
+              <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
+                <canvas id="reports-revenue-chart" style="max-height: 240px;"></canvas>
+              </div>
+            </div>
+
+            <!-- Utilization Chart Card -->
+            <div class="card" style="margin-bottom: 0; min-height: 320px; display: flex; flex-direction: column;">
+              <div class="card-title">Fleet Booking Metrics</div>
+              <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
+                <canvas id="reports-utilization-chart" style="max-height: 240px;"></canvas>
+              </div>
+            </div>
+
+            <!-- Export Panel -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 320px;">
+              <div>
+                <div class="card-title">Management Audits</div>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+                  Generate complete system data reports for the active fleet size, vehicle status distribution, and financial transaction sheets.
+                </p>
+                <div style="padding: 12px; background-color: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">
+                  <i data-feather="info" style="width: 12px; height: 12px; vertical-align: middle; margin-right: 4px;"></i>
+                  Data is exported in standard UTF-8 text lists compatible with auditing tools and spreadsheet imports.
+                </div>
+              </div>
+              <a id="report-export-btn" class="btn btn-primary" style="width: 100%;" download="fleet_report.txt">
+                <i data-feather="download"></i> Export Fleet Status Report
+              </a>
+            </div>
+          </div>
+
+          <!-- Analytical Details Tables Grid -->
+          <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px;">
+            <!-- Category Revenue Table -->
+            <div class="card" style="margin-bottom: 0;">
+              <div class="card-title">Revenue Ledger Breakdown</div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Category Class</th>
+                      <th>Total Active Bookings</th>
+                      <th style="text-align: right;">Gross Category Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reports-category-revenue-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Utilization Details -->
+          <div class="card">
+            <div class="card-title">Vehicle Fleet Performance & Utilization Ratios</div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Car ID</th>
+                    <th>Make & Model</th>
+                    <th>License Plate</th>
+                    <th>Class</th>
+                    <th>Total Bookings</th>
+                    <th>Rental Days</th>
+                    <th>Total Earnings</th>
+                    <th>Current Status</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-utilization-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- -----------------------------------------------------
+     Modals: Add/Edit Vehicles & Customers
+     ----------------------------------------------------- */
+
+  <!-- Modal A: Add Vehicle -->
+  <div id="modal-add-vehicle" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Register New Fleet Vehicle</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-vehicle')">&times;</button>
+      </div>
+      <form id="add-vehicle-form" onsubmit="submitAddVehicle(event)">
+        <div class="modal-body">
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-veh-make">Make / Manufacturer</label>
+              <input type="text" id="add-veh-make" class="form-control" placeholder="e.g. Honda" required>
+            </div>
+            <div>
+              <label class="form-label" for="add-veh-model">Model Name</label>
+              <input type="text" id="add-veh-model" class="form-control" placeholder="e.g. Civic" required>
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-veh-year">Manufacturing Year</label>
+              <input type="number" id="add-veh-year" class="form-control" min="1900" max="2027" placeholder="e.g. 2023" required>
+            </div>
+            <div>
+              <label class="form-label" for="add-veh-plate">License Plate Number</label>
+              <input type="text" id="add-veh-plate" class="form-control" placeholder="e.g. KA-01-ME-1234" required>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-veh-category">Vehicle Category</label>
+              <select id="add-veh-category" class="form-control" required>
+                <!-- Categories loaded dynamically -->
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="add-veh-color">Color</label>
+              <input type="text" id="add-veh-color" class="form-control" placeholder="e.g. Platinum White" required>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-veh-mileage">Starting Odometer (KM)</label>
+              <input type="number" id="add-veh-mileage" class="form-control" min="0" placeholder="e.g. 1000" required>
+            </div>
+            <div>
+              <label class="form-label" for="add-veh-fuel">Fuel Type</label>
+              <select id="add-veh-fuel" class="form-control" required>
+                <option value="petrol">Petrol</option>
+                <option value="diesel">Diesel</option>
+                <option value="electric">Electric</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-veh-transmission">Transmission</label>
+              <select id="add-veh-transmission" class="form-control" required>
+                <option value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="add-veh-image">Image URL</label>
+              <input type="url" id="add-veh-image" class="form-control" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-vehicle')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal B: Edit Vehicle -->
+  <div id="modal-edit-vehicle" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Fleet Vehicle Specifications</h3>
+        <button class="modal-close" onclick="closeModal('modal-edit-vehicle')">&times;</button>
+      </div>
+      <form id="edit-vehicle-form" onsubmit="submitEditVehicle(event)">
+        <input type="hidden" id="edit-veh-id">
+        <div class="modal-body">
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-veh-make">Make / Manufacturer</label>
+              <input type="text" id="edit-veh-make" class="form-control" required>
+            </div>
+            <div>
+              <label class="form-label" for="edit-veh-model">Model Name</label>
+              <input type="text" id="edit-veh-model" class="form-control" required>
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-veh-year">Manufacturing Year</label>
+              <input type="number" id="edit-veh-year" class="form-control" min="1900" max="2027" required>
+            </div>
+            <div>
+              <label class="form-label" for="edit-veh-plate">License Plate Number</label>
+              <input type="text" id="edit-veh-plate" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-veh-category">Vehicle Category</label>
+              <select id="edit-veh-category" class="form-control" required>
+                <!-- Dynamic -->
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="edit-veh-color">Color</label>
+              <input type="text" id="edit-veh-color" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-veh-mileage">Odometer Reading (KM)</label>
+              <input type="number" id="edit-veh-mileage" class="form-control" min="0" required>
+            </div>
+            <div>
+              <label class="form-label" for="edit-veh-fuel">Fuel Type</label>
+              <select id="edit-veh-fuel" class="form-control" required>
+                <option value="petrol">Petrol</option>
+                <option value="diesel">Diesel</option>
+                <option value="electric">Electric</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-veh-transmission">Transmission</label>
+              <select id="edit-veh-transmission" class="form-control" required>
+                <option value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="edit-veh-status">Operational Status</label>
+              <select id="edit-veh-status" class="form-control" required>
+                <option value="available">Available</option>
+                <option value="rented">Rented</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="retired">Retired</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-veh-image">Image URL</label>
+            <input type="url" id="edit-veh-image" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-vehicle')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal C: Add Customer -->
+  <div id="modal-add-customer" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Register Customer Profile</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-customer')">&times;</button>
+      </div>
+      <form id="add-customer-form" onsubmit="submitAddCustomer(event)">
+        <div class="modal-body">
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-cust-first-name">First Name</label>
+              <input type="text" id="add-cust-first-name" class="form-control" placeholder="e.g. Rohan" required>
+            </div>
+            <div>
+              <label class="form-label" for="add-cust-last-name">Last Name</label>
+              <input type="text" id="add-cust-last-name" class="form-control" placeholder="e.g. Sharma" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="add-cust-email">Email Address</label>
+            <input type="email" id="add-cust-email" class="form-control" placeholder="e.g. rohan.sharma@gmail.com" required>
+          </div>
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="add-cust-phone">Phone Number</label>
+              <input type="tel" id="add-cust-phone" class="form-control" placeholder="e.g. +919876543210" required>
+            </div>
+            <div>
+              <label class="form-label" for="add-cust-dl">Driving License Number</label>
+              <input type="text" id="add-cust-dl" class="form-control" placeholder="e.g. DL-XXXXXXXXXXXXX" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-customer')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Register Customer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal D: Edit Customer -->
+  <div id="modal-edit-customer" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Customer Profile</h3>
+        <button class="modal-close" onclick="closeModal('modal-edit-customer')">&times;</button>
+      </div>
+      <form id="edit-customer-form" onsubmit="submitEditCustomer(event)">
+        <input type="hidden" id="edit-cust-id">
+        <div class="modal-body">
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-cust-first-name">First Name</label>
+              <input type="text" id="edit-cust-first-name" class="form-control" required>
+            </div>
+            <div>
+              <label class="form-label" for="edit-cust-last-name">Last Name</label>
+              <input type="text" id="edit-cust-last-name" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-cust-email">Email Address</label>
+            <input type="email" id="edit-cust-email" class="form-control" required>
+          </div>
+          <div class="form-group row">
+            <div>
+              <label class="form-label" for="edit-cust-phone">Phone Number</label>
+              <input type="tel" id="edit-cust-phone" class="form-control" required>
+            </div>
+            <div>
+              <label class="form-label" for="edit-cust-dl">Driving License Number</label>
+              <input type="text" id="edit-cust-dl" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-cust-status">Profile Status</label>
+            <select id="edit-cust-status" class="form-control" required>
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-customer')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading JS Libraries -->
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/vehicles.js"></script>
+  <script src="js/customers.js"></script>
+  <script src="js/bookings.js"></script>
+  <script src="js/returns.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

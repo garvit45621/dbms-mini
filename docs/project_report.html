@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DriveEase - DBMS Lab Project Report</title>
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.6;
+      color: #111;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: justify;
+    }
+    h1, h2, h3, h4 {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #0f172a;
+    }
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 6px;
+      margin-top: 40px;
+      page-break-before: always;
+    }
+    h3 {
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    .cover-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 90vh;
+      text-align: center;
+      page-break-after: always;
+      padding: 40px 0;
+    }
+    .cover-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: 100px;
+      font-family: Arial, sans-serif;
+    }
+    .cover-subtitle {
+      font-size: 18px;
+      color: #475569;
+      margin-top: 10px;
+    }
+    .cover-meta {
+      margin-top: 150px;
+      font-size: 16px;
+    }
+    .table-of-contents {
+      page-break-after: always;
+    }
+    .toc-list {
+      list-style: none;
+      padding: 0;
+    }
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px dotted #ccc;
+    }
+    .toc-name {
+      background: white;
+      padding-right: 5px;
+    }
+    .toc-page {
+      background: white;
+      padding-left: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    table, th, td {
+      border: 1px solid #111;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+    }
+    code, pre {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f8fafc;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    pre {
+      display: block;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin: 15px 0;
+    }
+    .abstract-box {
+      margin-top: 40px;
+      font-style: italic;
+      page-break-after: always;
+    }
+    
+    @media print {
+      body {
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+        font-size: 12pt;
+      }
+      .cover-page {
+        min-height: 100vh;
+      }
+      h2 {
+        page-break-before: always;
+      }
+      pre {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div>
+      <div style="font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">A Database Management Systems Lab Project Report</div>
+      <div class="cover-title">DRIVEEASE</div>
+      <div class="cover-subtitle">VEHICLE RENTAL MANAGEMENT SYSTEM</div>
+    </div>
+    
+    <div class="cover-meta">
+      <p>Submitted in partial fulfillment of the requirements for the award of degree of</p>
+      <p style="font-weight: bold; margin-top: 10px;">Bachelor of Engineering in Computer Science & Engineering</p>
+      <p style="margin-top: 40px;">By</p>
+      <p style="font-weight: bold; font-size: 18px;">[Student Name]</p>
+      <p>USN: [USN Number]</p>
+    </div>
+
+    <div style="margin-top: 100px;">
+      <p style="font-weight: bold;">Department of Computer Science and Engineering</p>
+      <p style="font-weight: bold; text-transform: uppercase;">BMS Institute of Technology and Management</p>
+      <p>Bangalore - 560064</p>
+      <p style="margin-top: 10px; font-weight: bold;">May 2026</p>
+    </div>
+  </div>
+
+  <!-- ABSTRACT -->
+  <div class="abstract-box">
+    <h2 style="page-break-before: avoid; text-align: center;">Abstract</h2>
+    <p>
+      The <strong>DriveEase Vehicle Rental Management System</strong> is a commercial fleet reservation and tracking platform built to automate the core operations of a rental company. Traditional rental services struggle with operational delays, inaccurate manual damage estimations, unrecorded overdue fines, and invoice inconsistencies. This project presents a relational database model that resolves these challenges.
+    </p>
+    <p>
+      The architecture utilizes a <strong>Node.js and Express</strong> backend to expose REST APIs, connected to a normalized <strong>MySQL 8.0</strong> relational database. On the frontend, a responsive, minimalist dashboard was built using <strong>Vanilla HTML5, CSS3, and JavaScript</strong>. 
+    </p>
+    <p>
+      To ensure database constraints and data integrity, the system implements <strong>triggers</strong> for state monitoring, <strong>views</strong> for reporting aggregations, and **transaction-safe stored procedures** for booking checks and vehicle check-ins. The system is equipped with an integrated <strong>Chart.js dashboard</strong> for analytics and print media templates that generate receipt invoices instantly. It serves as a comprehensive, end-to-end showcase of modern database design and full-stack software development.
+    </p>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="table-of-contents">
+    <h2 style="page-break-before: avoid; text-align: center; margin-bottom: 30px;">Table of Contents</h2>
+    <ul class="toc-list">
+      <li class="toc-item"><span class="toc-name">Abstract</span><span class="toc-page">i</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 1: Introduction</span><span class="toc-page">1</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 2: System Requirements and Specifications</span><span class="toc-page">2</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 3: System Design</span><span class="toc-page">3</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;3.1 Entity-Relationship (ER) Diagram</span><span class="toc-page">3</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;3.2 Schema Diagram</span><span class="toc-page">4</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;3.3 Database Normalization</span><span class="toc-page">4</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 4: Implementation</span><span class="toc-page">6</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;4.1 MySQL Table Structures (DDL)</span><span class="toc-page">6</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;4.2 Database Logic (Triggers, Views & Procedures)</span><span class="toc-page">8</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;4.3 Backend API Routers</span><span class="toc-page">10</span></li>
+      <li class="toc-item"><span class="toc-name">&nbsp;&nbsp;&nbsp;&nbsp;4.4 Frontend Viewports Layout</span><span class="toc-page">11</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 5: Testing</span><span class="toc-page">13</span></li>
+      <li class="toc-item"><span class="toc-name">Chapter 6: Results and Discussion</span><span class="toc-page">14</span></li>
+      <li class="toc-item"><span class="toc-name">References</span><span class="toc-page">15</span></li>
+    </ul>
+  </div>
+
+  <!-- CHAPTER 1 -->
+  <h2>Chapter 1: Introduction</h2>
+  <h3>1.1 Project Objective</h3>
+  <p>
+    The objective of the DriveEase platform is to automate booking, billing, and inspection records. The application aims to replace insecure spreadsheets with an ACID-compliant SQL engine. It enables fleet operators to log cars, manage customers, checkout vehicles, calculate late fees, assess damages, and track lifetime earnings.
+  </p>
+  
+  <h3>1.2 Drawbacks of Manual Ledgers</h3>
+  <p>
+    Manual car rental tracking introduces several critical vulnerabilities:
+  </p>
+  <ul>
+    <li><strong>Double Bookings:</strong> No concurrency controls exist to prevent assigning the same car to two customers simultaneously.</li>
+    <li><strong>Unrecorded Overdue Fines:</strong> Returning officers fail to calculate exact late durations (in hours) and miss collecting late charges.</li>
+    <li><strong>Corrupted Audits:</strong> Manual arithmetic errors in adding security deposits, state sales taxes (12%), and discounts lead to financial leaks.</li>
+    <li><strong>No Inspection Trails:</strong> Scrapes and dent details are logged on paper slips that are easily misplaced, letting renters return damaged cars without penalty.</li>
+  </ul>
+
+  <h3>1.3 Proposed System Advantages</h3>
+  <p>
+    The proposed DriveEase system addresses these flaws using database-level automation:
+  </p>
+  <ul>
+    <li><strong>State Lock Triggers:</strong> Triggers ensure that when a booking is created, the vehicle status is locked to `'rented'` instantly.</li>
+    <li><strong>Stored Procedure Calculations:</strong> Standardized tax calculations and late fee estimators ensure consistency.</li>
+    <li><strong>Transactional Integrity:</strong> Operations are grouped within SQL transactions (COMMIT/ROLLBACK) so that a failure in billing reverses all status modifications, keeping tables clean.</li>
+  </ul>
+
+  <!-- CHAPTER 2 -->
+  <h2>Chapter 2: System Requirements and Specifications</h2>
+  <h3>2.1 Hardware Specifications</h3>
+  <ul>
+    <li><strong>Processor:</strong> Dual-Core Intel i3 / AMD Ryzen 3 or higher.</li>
+    <li><strong>RAM Memory:</strong> 4 GB RAM minimum (8 GB recommended for development).</li>
+    <li><strong>Storage:</strong> 250 MB free disk space for software bundles, logs, and database files.</li>
+  </ul>
+
+  <h3>2.2 Software Specifications</h3>
+  <ul>
+    <li><strong>Operating System:</strong> Windows 10/11, macOS, or Linux.</li>
+    <li><strong>Relational Database:</strong> MySQL Server v8.0 or higher.</li>
+    <li><strong>Runtime Environment:</strong> Node.js v16.0+ with NPM.</li>
+    <li><strong>Development IDE:</strong> Visual Studio Code.</li>
+    <li><strong>Client Browser:</strong> Google Chrome, Microsoft Edge, or Mozilla Firefox.</li>
+  </ul>
+
+  <h3>2.3 Dependency Configuration</h3>
+  <p>
+    The Express backend utilizes standard Node.js libraries to support REST interfaces:
+  </p>
+  <pre>
+"dependencies": {
+  "bcryptjs": "^2.4.3",
+  "cors": "^2.8.5",
+  "dotenv": "^16.4.5",
+  "express": "^4.19.2",
+  "jsonwebtoken": "^9.0.2",
+  "mysql2": "^3.9.7"
+}</pre>
+
+  <!-- CHAPTER 3 -->
+  <h2>Chapter 3: System Design</h2>
+  <h3>3.1 Entity-Relationship (ER) Diagram</h3>
+  <p>
+    The entity-relationship model consists of strong entities mapping the business logic:
+  </p>
+  <ul>
+    <li><strong>Admins:</strong> System operators managing inventory and checkouts.</li>
+    <li><strong>Customers:</strong> Renters with driver profiles.</li>
+    <li><strong>Vehicles:</strong> The physical rental fleet.</li>
+    <li><strong>Categories:</strong> Pricing specifications (daily rates, security deposits, late fees).</li>
+    <li><strong>Rentals:</strong> Active and past booking events.</li>
+    <li><strong>Invoices:</strong> Financial billing sheets generated for rentals.</li>
+    <li><strong>Payments:</strong> Ledger transactions.</li>
+    <li><strong>Returns:</strong> Return inspections, odometer readings, and damage details.</li>
+  </ul>
+
+  <h3>3.2 Schema Diagram</h3>
+  <p>
+    The schema defines clear foreign key constraints:
+  </p>
+  <ul>
+    <li><code>vehicles.category_id</code> references <code>categories.category_id</code> (Many-to-One).</li>
+    <li><code>rentals.customer_id</code> references <code>customers.customer_id</code> (Many-to-One).</li>
+    <li><code>rentals.vehicle_id</code> references <code>vehicles.vehicle_id</code> (Many-to-One).</li>
+    <li><code>invoices.rental_id</code> references <code>rentals.rental_id</code> (One-to-One).</li>
+    <li><code>returns.rental_id</code> references <code>rentals.rental_id</code> (One-to-One).</li>
+  </ul>
+
+  <h3>3.3 Database Normalization</h3>
+  <p>
+    The schema was designed up to <strong>Third Normal Form (3NF)</strong> to eliminate redundancy:
+  </p>
+  <ul>
+    <li><strong>First Normal Form (1NF):</strong> All values are atomic (e.g., separating <code>first_name</code> and <code>last_name</code>; using auto-increment integer primary keys).</li>
+    <li><strong>Second Normal Form (2NF):</strong> No partial dependencies exist. All columns in <code>vehicles</code> depend fully on <code>vehicle_id</code>.</li>
+    <li><strong>Third Normal Form (3NF):</strong> Transitive dependencies are eliminated. Rather than storing the daily rate inside the <code>vehicles</code> table (which would create a transitive dependency: Vehicle ➔ Category ➔ Daily Rate), a separate <code>categories</code> table was created. The vehicle table only references <code>category_id</code>, separating pricing from physical inventory.</li>
+  </ul>
+
+  <!-- CHAPTER 4 -->
+  <h2>Chapter 4: Implementation</h2>
+  <h3>4.1 MySQL Table Structures (DDL)</h3>
+  <p>
+    Below are snippets of the tables, primary keys, and constraints defined in the schema:
+  </p>
+  <pre>
+CREATE TABLE categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    daily_rate DECIMAL(10,2) NOT NULL CHECK (daily_rate >= 0),
+    late_fee_per_hour DECIMAL(10,2) NOT NULL CHECK (late_fee_per_hour >= 0),
+    deposit_amount DECIMAL(10,2) NOT NULL CHECK (deposit_amount >= 0)
+);
+
+CREATE TABLE vehicles (
+    vehicle_id INT AUTO_INCREMENT PRIMARY KEY,
+    make VARCHAR(50) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    license_plate VARCHAR(20) UNIQUE NOT NULL,
+    category_id INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'available' CHECK (status IN ('available', 'rented', 'maintenance', 'retired')),
+    mileage INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);</pre>
+
+  <h3>4.2 Database Logic</h3>
+  <h4>Triggers</h4>
+  <p>
+    Triggers automate state updates. For example, <code>tg_after_return_insert</code> updates vehicle mileage and sets status to available or maintenance:
+  </p>
+  <pre>
+CREATE TRIGGER tg_after_return_insert
+AFTER INSERT ON returns
+FOR EACH ROW
+BEGIN
+    DECLARE v_vehicle_id INT;
+    SELECT vehicle_id INTO v_vehicle_id FROM rentals WHERE rental_id = NEW.rental_id;
+    
+    IF NEW.damage_notes IS NOT NULL AND CHAR_LENGTH(TRIM(NEW.damage_notes)) > 0 THEN
+        UPDATE vehicles SET status = 'maintenance', mileage = NEW.mileage_in WHERE vehicle_id = v_vehicle_id;
+    ELSE
+        UPDATE vehicles SET status = 'available', mileage = NEW.mileage_in WHERE vehicle_id = v_vehicle_id;
+    END IF;
+    
+    UPDATE rentals SET status = 'completed', actual_return_date = NEW.return_date WHERE rental_id = NEW.rental_id;
+END;</pre>
+
+  <h4>Stored Procedures</h4>
+  <p>
+    Transactions are encapsulated in procedures. <code>sp_create_booking</code> locks the vehicle and inserts the rental and invoice atomically:
+  </p>
+  <pre>
+CREATE PROCEDURE sp_create_booking(
+    IN p_customer_id INT, IN p_vehicle_id INT, IN p_start_date DATETIME, IN p_end_date DATETIME,
+    IN p_admin_id INT, IN p_discount DECIMAL(10,2), OUT o_rental_id INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    START TRANSACTION;
+    -- check vehicle status
+    -- calculate days, subtotal, tax, discounts
+    -- INSERT INTO rentals
+    -- INSERT INTO invoices
+    COMMIT;
+END;</pre>
+
+  <h3>4.3 Backend API Routers</h3>
+  <p>
+    The server routes HTTP requests and queries MySQL using connection pools:
+  </p>
+  <ul>
+    <li><code>POST /api/auth/login</code>: Validates credentials and returns JWT.</li>
+    <li><code>GET /api/vehicles</code>: Lists vehicles with pagination and search filters.</li>
+    <li><code>POST /api/rentals/book</code>: Initiates booking by executing <code>sp_create_booking</code>.</li>
+    <li><code>POST /api/rentals/return</code>: Processes returns by executing <code>sp_process_return</code>.</li>
+  </ul>
+
+  <h3>4.4 Frontend Viewports Layout</h3>
+  <p>
+    The interface is built as a single-page application (SPA). Content views are wrapped in divs (like <code>view-dashboard</code>, <code>view-vehicles</code>) that toggle visibility dynamically.
+  </p>
+  <p>
+    We integrated **Chart.js** on the analytics page to render:
+  </p>
+  <ul>
+    <li><strong>Revenue Share:</strong> A Doughnut chart showing earnings per vehicle category.</li>
+    <li><strong>Booking Metrics:</strong> A Bar chart showing the active rental days of the top vehicles.</li>
+  </ul>
+
+  <!-- CHAPTER 5 -->
+  <h2>Chapter 5: Testing</h2>
+  <h3>5.1 Unit Testing</h3>
+  <p>
+    We tested individual API routes. For instance, sending invalid admin credentials returns an HTTP 401 response:
+  </p>
+  <pre>
+Request: POST http://localhost:5000/api/auth/login {"username": "admin", "password": "wrongpassword"}
+Response: HTTP 401 {"success": false, "message": "Invalid credentials."}</pre>
+
+  <h3>5.2 Integration Booking Flow</h3>
+  <p>
+    The checkout sequence was tested sequentially:
+  </p>
+  <ol>
+    <li>Select customer Vikram Singh and available vehicle Honda Civic.</li>
+    <li>Set booking dates for 3 days and click Book.</li>
+    <li>Confirm: A rental record was created, an invoice was generated, and the vehicle status changed to <code>rented</code>.</li>
+  </ol>
+
+  <h3>5.3 Return Flow Calculations</h3>
+  <p>
+    We verified late check-in calculations:
+  </p>
+  <ul>
+    <li>A car returned 4 hours late generated <code>late_hours = 4</code>.</li>
+    <li>Fines were calculated automatically: $4 \times \text{hourly rate}$.</li>
+    <li>We verified that selecting "Minor Scratches" automatically added a ₹2,500 damage surcharge.</li>
+    <li>Balance sheets adjusted dynamically, and original security deposits were deducted correctly.</li>
+  </ul>
+
+  <!-- CHAPTER 6 -->
+  <h2>Chapter 6: Results and Discussion</h2>
+  <p>
+    The implemented system provides a robust, commercial-grade solution for vehicle rental management.
+  </p>
+  <p>
+    Using transaction-safe stored procedures prevents incomplete booking states, and automatic triggers handle vehicle status updates reliably.
+  </p>
+  <p>
+    Adding the print template and Chart.js graphs makes the reporting system highly visual. The application can run in offline mock mode using client-side <code>localStorage</code>, ensuring it is always functional and testable.
+  </p>
+
+  <!-- REFERENCES -->
+  <h2>References</h2>
+  <ol>
+    <li>Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). <em>Database System Concepts</em> (7th ed.). McGraw-Hill.</li>
+    <li>MySQL Reference Manual - Triggers, Stored Procedures, and Transactions.</li>
+    <li>Express.js Web Application Framework Documentation - Router Routing APIs.</li>
+    <li>Chart.js JavaScript Chart Library Reference - Donut and Bar Graph Canvas Configurations.</li>
+  </ol>
+
+</body>
+</html>
