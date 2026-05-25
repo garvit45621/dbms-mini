@@ -27,10 +27,15 @@ app.get('*', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-  console.log(`========================================================================`);
-  console.log(` VEHICLE RENTAL MANAGEMENT SYSTEM SERVER RUNNING ON PORT ${PORT}`);
-  console.log(` API Endpoint: http://localhost:${PORT}/api`);
-  console.log(` User Panel:  http://localhost:${PORT}`);
-  console.log(`========================================================================`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`========================================================================`);
+    console.log(` VEHICLE RENTAL MANAGEMENT SYSTEM SERVER RUNNING ON PORT ${PORT}`);
+    console.log(` API Endpoint: http://localhost:${PORT}/api`);
+    console.log(` User Panel:  http://localhost:${PORT}`);
+    console.log(`========================================================================`);
+  });
+}
+
+module.exports = app;
+
